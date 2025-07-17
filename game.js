@@ -125,6 +125,8 @@ witch.style.left = witchX + 'px';
               witchRect.top > obsRect.bottom)) {
             gameOver = true;
             gameOverText.style.display = 'block';
+            document.getElementById('finalScore').textContent = `Final Score: ${score}`;
+
         }
     });
 
