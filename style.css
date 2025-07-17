@@ -21,7 +21,6 @@ body {
     left: 100px;
 }
 
-
 .obstacle {
     position: absolute;
     background-repeat: no-repeat;
@@ -29,8 +28,6 @@ body {
     background-size: cover;
     z-index: 1;
 }
-
-
 
 #score {
     position: absolute;
