@@ -142,3 +142,8 @@ function scheduleObstacle() {
 scheduleObstacle(); // 開始第一次呼叫
 
 update();
+
+document.getElementById('restartBtn').addEventListener('click', () => {
+    location.reload();
+});
+
