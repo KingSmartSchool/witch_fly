@@ -11,6 +11,9 @@ let obstacles = [];
 let score = 0;
 let gameOver = false;
 
+let obstacleSpeed = 5;   // 【新增】一開始障礙速度
+let difficultyTimer = 0; // 【新增】累積時間調整難度
+
 document.addEventListener('keydown', (e) => {
     if (e.code === 'Space' && !gameOver) velocity = lift;
     if (e.code === 'Space' && gameOver) location.reload();
@@ -34,9 +37,14 @@ function update() {
     if (witchY < 0) witchY = 0;
     witch.style.top = witchY + 'px';
 
+    difficultyTimer += 1;  // 【新增】累積 frame 數
+    if (difficultyTimer % 300 === 0) {  // 【新增】每 300 幀提升一次速度（大約 5 秒）
+        obstacleSpeed += 0.5;
+    }
+
     obstacles.forEach((obs, idx) => {
         let x = parseFloat(obs.style.left);
-        x -= 5;
+        x -= obstacleSpeed; // 【變更】用變速變數
         obs.style.left = x + 'px';
 
         const witchRect = witch.getBoundingClientRect();
