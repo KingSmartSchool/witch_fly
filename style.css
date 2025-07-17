@@ -1,0 +1,35 @@
+/* 基礎重置與變數定義 */
+:root {
+    --witch-purple: #7E57C2;
+    --witch-pink: #FF66B2;
+    --sparkle-yellow: #FFD600;
+}
+
+/* 遊戲容器與背景層 */
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(to bottom, #020111 0%, #191938 80%);
+}
+
+/* 女巫角色樣式 */
+#witch {
+    width: 120px;
+    height: 150px;
+    position: absolute;
+    left: 15%;
+    z-index: 10;
+    animation: witch-float 2s ease-in-out infinite alternate;
+}
+
+/* 障礙物通用樣式 */
+.obstacle {
+    position: absolute;
+    z-index: 5;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* [其他CSS規則保持不變...] */
