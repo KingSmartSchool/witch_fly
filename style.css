@@ -25,7 +25,7 @@ body {
     position: absolute;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: cover;
+    background-size: contain;
     z-index: 1;
 }
 
