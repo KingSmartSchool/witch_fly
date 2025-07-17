@@ -33,7 +33,10 @@ function spawnObstacle() {
     const obstacle = document.createElement('div');
     obstacle.classList.add('obstacle');
 
-    if (score < 10) {
+    // 如果分數 > 10，隨機產生 雲 或 閃電
+    let spawnType = (score < 10) ? 'cloud' : (Math.random() < 0.5 ? 'cloud' : 'lightning');
+
+    if (spawnType === 'cloud') {
         let randomHeight = Math.random() * 40 + 40;
         let randomWidth = Math.random() * 40 + 60;
         let randomTop = Math.random() * (window.innerHeight - randomHeight);
@@ -63,6 +66,7 @@ function spawnObstacle() {
     gameArea.appendChild(obstacle);
     obstacles.push(obstacle);
 }
+
 
 // 遊戲主迴圈
 function update() {
