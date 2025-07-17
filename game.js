@@ -58,7 +58,7 @@ obstacle.style.left = lightningX + 'px';
 obstacle.style.top = '-100px';
 
 obstacle.dataset.type = 'lightning';
-obstacle.dataset.speed = (Math.random() * 3 + 6).toFixed(2);
+obstacle.dataset.speed = (Math.random() * 6 + 2).toFixed(2);
 obstacle.style.backgroundImage = "url('lightning.png')";
 obstacle.style.backgroundSize = 'contain';
 obstacle.style.backgroundRepeat = 'no-repeat';
