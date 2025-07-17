@@ -51,4 +51,23 @@ body {
     color: red;
     text-shadow: 2px 2px black;
     text-align: center;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 30px;
+    border-radius: 20px;
+}
+
+#finalScore {
+    color: white;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+#restartBtn {
+    padding: 10px 20px;
+    font-size: 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    color: #333;
 }
