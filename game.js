@@ -63,6 +63,8 @@ obstacle.style.backgroundImage = "url('lightning.png')";
 obstacle.style.backgroundSize = 'contain';
 obstacle.style.backgroundRepeat = 'no-repeat';
 obstacle.style.backgroundPosition = 'center';
+obstacle.style.backgroundColor = 'transparent';
+
 
     }
 
