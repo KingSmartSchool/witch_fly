@@ -1,3 +1,4 @@
+let bestScore = localStorage.getItem('bestScore') || 0;
 const gameArea = document.getElementById('gameArea');
 const witch = document.getElementById('witch');
 const scoreDisplay = document.getElementById('score');
