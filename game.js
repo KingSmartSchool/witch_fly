@@ -37,8 +37,9 @@ function spawnObstacle() {
 
         obstacle.dataset.type = 'cloud';
         obstacle.dataset.speed = (Math.random() * 2 + 4).toFixed(2);  // 每個雲的速度不同
-        obstacle.style.backgroundImage = "url('images/cloud.png')";
+        obstacle.style.backgroundImage = "url('cloud.png')";
         obstacle.style.backgroundSize = 'contain';
+
     } else {
         // ⚡ 閃電設定
         let lightningX = Math.random() * (window.innerWidth - 80); // 避免出畫面
