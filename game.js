@@ -51,16 +51,19 @@ function spawnObstacle() {
         obstacle.style.backgroundImage = "url('cloud.png')";
         obstacle.style.backgroundSize = 'contain';
     } else {
-        let lightningX = Math.random() * (window.innerWidth - 80);
-        obstacle.style.width = '20px';
-        obstacle.style.height = '100px';
-        obstacle.style.left = lightningX + 'px';
-        obstacle.style.top = '-100px';
+let lightningX = Math.random() * (window.innerWidth - 80);
+obstacle.style.width = '20px';
+obstacle.style.height = '100px';
+obstacle.style.left = lightningX + 'px';
+obstacle.style.top = '-100px';
 
-        obstacle.dataset.type = 'lightning';
-        obstacle.dataset.speed = (Math.random() * 3 + 6).toFixed(2);
-        obstacle.style.backgroundImage = "url('lightning.png')";
-        obstacle.style.backgroundSize = 'contain';
+obstacle.dataset.type = 'lightning';
+obstacle.dataset.speed = (Math.random() * 3 + 6).toFixed(2);
+obstacle.style.backgroundImage = "url('lightning.png')";
+obstacle.style.backgroundSize = 'contain';
+obstacle.style.backgroundRepeat = 'no-repeat';
+obstacle.style.backgroundPosition = 'center';
+
     }
 
     gameArea.appendChild(obstacle);
