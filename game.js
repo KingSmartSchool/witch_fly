@@ -1,10 +1,13 @@
+// 儲存與讀取最高分
 let bestScore = localStorage.getItem('bestScore') || 0;
 
+// 選取 DOM 元素
 const gameArea = document.getElementById('gameArea');
 const witch = document.getElementById('witch');
 const scoreDisplay = document.getElementById('score');
 const gameOverText = document.getElementById('gameOver');
 
+// 遊戲初始狀態
 let witchY = 200;
 let velocity = 0;
 const gravity = 0.4;
@@ -16,6 +19,7 @@ let gameOver = false;
 let witchX = 100;
 let keys = {};
 
+// 控制鍵盤按鍵
 document.addEventListener('keydown', (e) => {
     keys[e.code] = true;
     if (gameOver && e.code === 'Space') location.reload();
@@ -24,6 +28,7 @@ document.addEventListener('keyup', (e) => {
     keys[e.code] = false;
 });
 
+// 生成障礙物（雲 or 閃電）
 function spawnObstacle() {
     const obstacle = document.createElement('div');
     obstacle.classList.add('obstacle');
@@ -51,13 +56,15 @@ function spawnObstacle() {
 
         obstacle.dataset.type = 'lightning';
         obstacle.dataset.speed = (Math.random() * 3 + 6).toFixed(2);
-        obstacle.style.backgroundImage = "linear-gradient(yellow, orange)";
+        obstacle.style.backgroundImage = "url('lightning.png')";
+        obstacle.style.backgroundSize = 'contain';
     }
 
     gameArea.appendChild(obstacle);
     obstacles.push(obstacle);
 }
 
+// 遊戲主迴圈
 function update() {
     if (gameOver) return;
 
@@ -68,6 +75,7 @@ function update() {
     velocity += gravity;
     witchY += velocity;
 
+    // 邊界限制
     if (witchY > window.innerHeight - 50) witchY = window.innerHeight - 50;
     if (witchY < 0) witchY = 0;
     if (witchX < 0) witchX = 0;
@@ -102,6 +110,7 @@ function update() {
             }
         }
 
+        // 碰撞偵測
         const witchRect = witch.getBoundingClientRect();
         const obsRect = obs.getBoundingClientRect();
         if (!(witchRect.right < obsRect.left ||
@@ -128,15 +137,18 @@ function update() {
     requestAnimationFrame(update);
 }
 
+// 隨機間隔生成障礙
 function scheduleObstacle() {
     spawnObstacle();
     let delay = Math.random() * 800 + 1200;
     setTimeout(scheduleObstacle, delay);
 }
 
+// 開始遊戲
 scheduleObstacle();
 update();
 
+// Restart 按鈕
 document.getElementById('restartBtn').addEventListener('click', () => {
     location.reload();
 });
