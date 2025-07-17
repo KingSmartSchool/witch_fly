@@ -1,42 +1,52 @@
-// 遊戲常量定義
-const CONFIG = {
-    WITCH: {
-        INITIAL_Y: 50,
-        GRAVITY: 0.4,
-        JUMP_FORCE: -10
-    },
-    GAME: {
-        SPEED: 5,
-        SPEED_INCREASE: 0.5,
-        OBSTACLE_INTERVAL: 1500
-    }
-};
+const witch = document.getElementById('witch');
+const obstacle = document.getElementById('obstacle');
+let witchY = 200;
+let velocity = 0;
+const gravity = 0.5;
+const lift = -10;
 
-class WitchGame {
-    constructor() {
-        this.initElements();
-        this.initEventListeners();
-        this.startGame();
-    }
+let obstacleX = window.innerWidth;
+let obstacleY = Math.random() * (window.innerHeight - 50);
 
-    initElements() {
-        // DOM元素引用
-        this.witch = document.getElementById('witch');
-        this.gameContainer = document.getElementById('game-container');
-        this.scoreDisplay = document.getElementById('score-display');
-        // [其他元素引用...]
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') {
+        velocity = lift;
     }
+});
 
-    initEventListeners() {
-        // 事件監聽器
-        document.addEventListener('keydown', (e) => this.handleControls(e));
-        this.restartBtn.addEventListener('click', () => this.resetGame());
+function update() {
+    velocity += gravity;
+    witchY += velocity;
+    if (witchY > window.innerHeight - 30) witchY = window.innerHeight - 30;
+    if (witchY < 0) witchY = 0;
+    witch.style.top = witchY + 'px';
+
+    obstacleX -= 5;
+    if (obstacleX < -50) {
+        obstacleX = window.innerWidth;
+        obstacleY = Math.random() * (window.innerHeight - 50);
     }
 
-    // [其他遊戲方法保持不變...]
+    obstacle.style.left = obstacleX + 'px';
+    obstacle.style.top = obstacleY + 'px';
+
+    if (collisionCheck()) {
+        alert('💀 Game Over');
+        window.location.reload();
+    }
+
+    requestAnimationFrame(update);
 }
 
-// 遊戲啟動
-document.addEventListener('DOMContentLoaded', () => {
-    new WitchGame();
-});
+function collisionCheck() {
+    const witchRect = witch.getBoundingClientRect();
+    const obsRect = obstacle.getBoundingClientRect();
+    return !(
+        witchRect.right < obsRect.left ||
+        witchRect.left > obsRect.right ||
+        witchRect.bottom < obsRect.top ||
+        witchRect.top > obsRect.bottom
+    );
+}
+
+update();
