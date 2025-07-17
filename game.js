@@ -39,7 +39,7 @@ function spawnObstacle() {
 
         obstacle.style.width = randomWidth + 'px';
         obstacle.style.height = randomHeight + 'px';
-        obstacle.style.left = '100vw';
+        obstacle.style.left = (window.innerWidth + 100) + 'px';
         obstacle.style.top = randomTop + 'px';
 
         obstacle.dataset.type = 'cloud';
