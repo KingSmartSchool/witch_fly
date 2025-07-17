@@ -124,9 +124,19 @@ witch.style.left = witchX + 'px';
               witchRect.left > obsRect.right ||
               witchRect.bottom < obsRect.top ||
               witchRect.top > obsRect.bottom)) {
-            gameOver = true;
-            gameOverText.style.display = 'block';
-            document.getElementById('finalScore').textContent = `Final Score: ${score}`;
+           gameOver = true;
+           gameOverText.style.display = 'block';
+
+        if (score > bestScore) {
+            bestScore = score;
+            localStorage.setItem('bestScore', bestScore);
+}
+
+document.getElementById('finalScore').innerHTML = `
+    Final Score: ${score}<br>
+    Best Score: ${bestScore}
+`;
+
 
         }
     });
