@@ -11,8 +11,8 @@ let obstacles = [];
 let score = 0;
 let gameOver = false;
 
-let obstacleSpeed = 5;   // 【新增】一開始障礙速度
-let difficultyTimer = 0; // 【新增】累積時間調整難度
+let baseSpeed = 5;
+let difficultyTimer = 0;
 
 document.addEventListener('keydown', (e) => {
     if (e.code === 'Space' && !gameOver) velocity = lift;
@@ -22,8 +22,30 @@ document.addEventListener('keydown', (e) => {
 function spawnObstacle() {
     const obstacle = document.createElement('div');
     obstacle.classList.add('obstacle');
-    obstacle.style.left = '100vw';
-    obstacle.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+
+    // 隨機大小
+    const width = 40 + Math.random() * 80;
+    obstacle.style.width = width + 'px';
+    obstacle.style.height = (width * 0.6) + 'px';
+
+    // 雲：左右移動， 閃電：直落
+    let isLightning = score >= 10 && Math.random() < 0.5;
+    if (isLightning) {
+        obstacle.style.background = 'yellow';
+        obstacle.style.height = '80px';
+        obstacle.style.width = '20px';
+        obstacle.style.background = 'linear-gradient(white, yellow)';
+        obstacle.dataset.type = 'lightning';
+        obstacle.style.left = (Math.random() * (window.innerWidth - 50)) + 'px';
+        obstacle.style.top = '-100px';
+    } else {
+        obstacle.style.background = 'url(images/cloud.png) no-repeat center/contain';
+        obstacle.style.left = '100vw';
+        obstacle.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+        obstacle.dataset.speed = (baseSpeed + Math.random() * 3).toFixed(1);
+        obstacle.dataset.type = 'cloud';
+    }
+
     gameArea.appendChild(obstacle);
     obstacles.push(obstacle);
 }
@@ -37,35 +59,6 @@ function update() {
     if (witchY < 0) witchY = 0;
     witch.style.top = witchY + 'px';
 
-    difficultyTimer += 1;  // 【新增】累積 frame 數
-    if (difficultyTimer % 300 === 0) {  // 【新增】每 300 幀提升一次速度（大約 5 秒）
-        obstacleSpeed += 0.5;
-    }
-
-    obstacles.forEach((obs, idx) => {
-        let x = parseFloat(obs.style.left);
-        x -= obstacleSpeed; // 【變更】用變速變數
-        obs.style.left = x + 'px';
-
-        const witchRect = witch.getBoundingClientRect();
-        const obsRect = obs.getBoundingClientRect();
-        if (!(witchRect.right < obsRect.left ||
-              witchRect.left > obsRect.right ||
-              witchRect.bottom < obsRect.top ||
-              witchRect.top > obsRect.bottom)) {
-            gameOver = true;
-            gameOverText.style.display = 'block';
-        }
-        if (x < -100) {
-            gameArea.removeChild(obs);
-            obstacles.splice(idx, 1);
-            score += 1;
-        }
-    });
-
-    scoreDisplay.textContent = 'Score: ' + score;
-    requestAnimationFrame(update);
-}
-
-setInterval(spawnObstacle, 1500);
-update();
+    difficultyTimer += 1;
+    if (difficultyTimer % 300 === 0) {
+        baseSpeed += 0.5;
