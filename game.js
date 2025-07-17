@@ -1,4 +1,5 @@
 let bestScore = localStorage.getItem('bestScore') || 0;
+
 const gameArea = document.getElementById('gameArea');
 const witch = document.getElementById('witch');
 const scoreDisplay = document.getElementById('score');
@@ -12,8 +13,6 @@ let obstacles = [];
 let score = 0;
 let gameOver = false;
 
-let difficultyTimer = 0;
-
 let witchX = 100;
 let keys = {};
 
@@ -25,17 +24,13 @@ document.addEventListener('keyup', (e) => {
     keys[e.code] = false;
 });
 
-
-// 🟡 產生障礙：根據分數不同，可能是雲朵或閃電
 function spawnObstacle() {
     const obstacle = document.createElement('div');
     obstacle.classList.add('obstacle');
 
-    // 雲 or 閃電
     if (score < 10) {
-        // ☁️ 雲朵設定
-        let randomHeight = Math.random() * 40 + 40;  // 40~80px
-        let randomWidth = Math.random() * 40 + 60;   // 60~100px
+        let randomHeight = Math.random() * 40 + 40;
+        let randomWidth = Math.random() * 40 + 60;
         let randomTop = Math.random() * (window.innerHeight - randomHeight);
 
         obstacle.style.width = randomWidth + 'px';
@@ -44,20 +39,18 @@ function spawnObstacle() {
         obstacle.style.top = randomTop + 'px';
 
         obstacle.dataset.type = 'cloud';
-        obstacle.dataset.speed = (Math.random() * 2 + 4).toFixed(2);  // 每個雲的速度不同
+        obstacle.dataset.speed = (Math.random() * 2 + 4).toFixed(2);
         obstacle.style.backgroundImage = "url('cloud.png')";
         obstacle.style.backgroundSize = 'contain';
-
     } else {
-        // ⚡ 閃電設定
-        let lightningX = Math.random() * (window.innerWidth - 80); // 避免出畫面
+        let lightningX = Math.random() * (window.innerWidth - 80);
         obstacle.style.width = '20px';
         obstacle.style.height = '100px';
         obstacle.style.left = lightningX + 'px';
         obstacle.style.top = '-100px';
 
         obstacle.dataset.type = 'lightning';
-        obstacle.dataset.speed = (Math.random() * 3 + 6).toFixed(2);  // 掉落速度
+        obstacle.dataset.speed = (Math.random() * 3 + 6).toFixed(2);
         obstacle.style.backgroundImage = "linear-gradient(yellow, orange)";
     }
 
@@ -68,29 +61,21 @@ function spawnObstacle() {
 function update() {
     if (gameOver) return;
 
-    // 移動女巫
-// 玩家控制上下左右
-if (keys['ArrowUp'] || keys['Space']) velocity = lift;
-if (keys['ArrowLeft']) witchX -= 5;
-if (keys['ArrowRight']) witchX += 5;
+    if (keys['ArrowUp'] || keys['Space']) velocity = lift;
+    if (keys['ArrowLeft']) witchX -= 5;
+    if (keys['ArrowRight']) witchX += 5;
 
-// 重力影響
-velocity += gravity;
-witchY += velocity;
+    velocity += gravity;
+    witchY += velocity;
 
-// 範圍限制，防止飛出畫面
-if (witchY > window.innerHeight - 50) witchY = window.innerHeight - 50;
-if (witchY < 0) witchY = 0;
-if (witchX < 0) witchX = 0;
-if (witchX > window.innerWidth - 50) witchX = window.innerWidth - 50;
+    if (witchY > window.innerHeight - 50) witchY = window.innerHeight - 50;
+    if (witchY < 0) witchY = 0;
+    if (witchX < 0) witchX = 0;
+    if (witchX > window.innerWidth - 50) witchX = window.innerWidth - 50;
 
-// 更新女巫位置
-witch.style.top = witchY + 'px';
-witch.style.left = witchX + 'px';
+    witch.style.top = witchY + 'px';
+    witch.style.left = witchX + 'px';
 
-    difficultyTimer += 1;
-
-    // 移動障礙
     obstacles.forEach((obs, idx) => {
         let speed = parseFloat(obs.dataset.speed);
         let type = obs.dataset.type;
@@ -117,46 +102,41 @@ witch.style.left = witchX + 'px';
             }
         }
 
-        // 碰撞判斷
         const witchRect = witch.getBoundingClientRect();
         const obsRect = obs.getBoundingClientRect();
         if (!(witchRect.right < obsRect.left ||
-              witchRect.left > obsRect.right ||
-              witchRect.bottom < obsRect.top ||
-              witchRect.top > obsRect.bottom)) {
-           gameOver = true;
-           gameOverText.style.display = 'block';
+            witchRect.left > obsRect.right ||
+            witchRect.bottom < obsRect.top ||
+            witchRect.top > obsRect.bottom)) {
 
-        if (score > bestScore) {
-            bestScore = score;
-            localStorage.setItem('bestScore', bestScore);
-}
+            gameOver = true;
+            gameOverText.style.display = 'block';
 
-document.getElementById('finalScore').innerHTML = `
-    Final Score: ${score}<br>
-    Best Score: ${bestScore}
-`;
+            if (score > bestScore) {
+                bestScore = score;
+                localStorage.setItem('bestScore', bestScore);
+            }
 
-
+            document.getElementById('finalScore').innerHTML = `
+                Final Score: ${score}<br>
+                Best Score: ${bestScore}
+            `;
         }
     });
 
-    scoreDisplay.textContent = 'Score: ' + score;
+    scoreDisplay.textContent = `Score: ${score} | Best: ${bestScore}`;
     requestAnimationFrame(update);
 }
 
-// 🎯 每 1.5 秒產生障礙
 function scheduleObstacle() {
     spawnObstacle();
-    let delay = Math.random() * 800 + 1200; // 1200 ~ 2000 毫秒隨機
+    let delay = Math.random() * 800 + 1200;
     setTimeout(scheduleObstacle, delay);
 }
 
-scheduleObstacle(); // 開始第一次呼叫
-
+scheduleObstacle();
 update();
 
 document.getElementById('restartBtn').addEventListener('click', () => {
     location.reload();
 });
-
