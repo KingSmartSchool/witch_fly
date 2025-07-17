@@ -1,37 +1,15 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>魔法女巫飛行記</title>
+    <title>Witch Flying Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="game-container">
-        <!-- 視差背景層 -->
-        <div id="layer-1" class="parallax-layer"></div>
-        <div id="layer-2" class="parallax-layer"></div>
-        <div id="layer-3" class="parallax-layer"></div>
-        
-        <!-- 遊戲角色與物件 -->
+    <div id="gameArea">
         <div id="witch"></div>
-        
-        <!-- UI介面 -->
-        <div id="ui-container">
-            <div id="score-display">0</div>
-            <div id="mobile-controls">
-                <button id="jump-btn">跳躍</button>
-            </div>
-        </div>
-        
-        <!-- 遊戲結束畫面 -->
-        <div id="game-over">
-            <h1>遊戲結束!</h1>
-            <div id="final-score">得分: 0</div>
-            <button id="restart-btn">再玩一次</button>
-        </div>
+        <div id="obstacle"></div>
     </div>
-
-    <script src="game.js" defer></script>
+    <script src="game.js"></script>
 </body>
 </html>
