@@ -13,10 +13,17 @@ let gameOver = false;
 
 let difficultyTimer = 0;
 
+let witchX = 100;
+let keys = {};
+
 document.addEventListener('keydown', (e) => {
-    if (e.code === 'Space' && !gameOver) velocity = lift;
-    if (e.code === 'Space' && gameOver) location.reload();
+    keys[e.code] = true;
+    if (gameOver && e.code === 'Space') location.reload();
 });
+document.addEventListener('keyup', (e) => {
+    keys[e.code] = false;
+});
+
 
 // 🟡 產生障礙：根據分數不同，可能是雲朵或閃電
 function spawnObstacle() {
