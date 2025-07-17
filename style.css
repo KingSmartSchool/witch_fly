@@ -1,35 +1,32 @@
-/* 基礎重置與變數定義 */
-:root {
-    --witch-purple: #7E57C2;
-    --witch-pink: #FF66B2;
-    --sparkle-yellow: #FFD600;
+body {
+    margin: 0;
+    background: linear-gradient(#88f, #fff);
+    overflow: hidden;
 }
 
-/* 遊戲容器與背景層 */
-#game-container {
+#gameArea {
     position: relative;
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
-    background: linear-gradient(to bottom, #020111 0%, #191938 80%);
+    background: linear-gradient(#88f, #ccf);
 }
 
-/* 女巫角色樣式 */
 #witch {
-    width: 120px;
-    height: 150px;
     position: absolute;
-    left: 15%;
-    z-index: 10;
-    animation: witch-float 2s ease-in-out infinite alternate;
+    width: 50px;
+    height: 30px;
+    background: purple;
+    top: 50%;
+    left: 100px;
+    border-radius: 15px;
 }
 
-/* 障礙物通用樣式 */
-.obstacle {
+#obstacle {
     position: absolute;
-    z-index: 5;
-    background-size: contain;
-    background-repeat: no-repeat;
+    width: 50px;
+    height: 50px;
+    background: gray;
+    top: 50%;
+    left: 100vw;
+    border-radius: 50%;
 }
-
-/* [其他CSS規則保持不變...] */
