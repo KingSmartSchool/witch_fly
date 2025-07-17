@@ -68,11 +68,24 @@ function update() {
     if (gameOver) return;
 
     // 移動女巫
-    velocity += gravity;
-    witchY += velocity;
-    if (witchY > window.innerHeight - 50) witchY = window.innerHeight - 50;
-    if (witchY < 0) witchY = 0;
-    witch.style.top = witchY + 'px';
+// 玩家控制上下左右
+if (keys['ArrowUp'] || keys['Space']) velocity = lift;
+if (keys['ArrowLeft']) witchX -= 5;
+if (keys['ArrowRight']) witchX += 5;
+
+// 重力影響
+velocity += gravity;
+witchY += velocity;
+
+// 範圍限制，防止飛出畫面
+if (witchY > window.innerHeight - 50) witchY = window.innerHeight - 50;
+if (witchY < 0) witchY = 0;
+if (witchX < 0) witchX = 0;
+if (witchX > window.innerWidth - 50) witchX = window.innerWidth - 50;
+
+// 更新女巫位置
+witch.style.top = witchY + 'px';
+witch.style.left = witchX + 'px';
 
     difficultyTimer += 1;
 
