@@ -120,5 +120,12 @@ function update() {
 }
 
 // 🎯 每 1.5 秒產生障礙
-setInterval(spawnObstacle, 1500);
+function scheduleObstacle() {
+    spawnObstacle();
+    let delay = Math.random() * 800 + 1200; // 1200 ~ 2000 毫秒隨機
+    setTimeout(scheduleObstacle, delay);
+}
+
+scheduleObstacle(); // 開始第一次呼叫
+
 update();
