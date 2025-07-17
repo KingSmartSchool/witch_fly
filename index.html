@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>女巫飛行冒險</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        
+        #game-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #1e3c72, #2a5298);
+        }
+        
+        #witch {
+            width: 80px;
+            height: 60px;
+            position: absolute;
+            left: 100px;
+            top: 50%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30,50 Q50,30 70,50 L60,70 Q50,80 40,70 Z" fill="%23b366ff"/><circle cx="35" cy="45" r="5" fill="%23ffcc00"/><circle cx="45" cy="45" r="5" fill="%23ffcc00"/><path d="M70,50 L90,40 L95,45 L85,55 Z" fill="%23800000"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            transition: transform 0.2s;
+            z-index: 20;
+        }
+        
+        .obstacle {
+            position: absolute;
+            z-index: 10;
+        }
+        
+        .cloud {
+            width: 120px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        
+        .bird {
+            width: 40px;
+            height: 30px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M10,50 Q30,30 50,50 Q70,70 90,50 L70,60 Q50,50 30,60 Z" fill="%23ff9900"/></svg>');
+            background-size: contain;
+        }
+        
+        .lightning {
+            width: 20px;
+            height: 60px;
+            background: yellow;
+            animation: flicker 0.3s infinite;
+        }
+        
+        @keyframes flicker {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+        
+        #score-display {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 24px;
+            z-index: 100;
+        }
+        
+        #game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            display: none;
+        }
+        
+        #restart-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #ff6600;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="witch"></div>
+        <div id="score-display">分數: 0</div>
+        <div id="game-over">
+            <h1>遊戲結束!</h1>
+            <p id="final-score">最終分數: 0</p>
+            <button id="restart-btn">重新開始</button>
+        </div>
+    </div>
+
+    <script>
+        // 遊戲變數
+        const witch = document.getElementById('witch');
+        const gameContainer = document.getElementById('game-container');
+        const scoreDisplay = document.getElementById('score-display');
+        const gameOverScreen = document.getElementById('game-over');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const restartBtn = document.getElementById('restart-btn');
+        
+        let witchY = 50;
+        let gravity = 0.4;
+        let gameSpeed = 5;
+        let score = 0;
+        let gameRunning = true;
+        let obstacles = [];
+        
+        // 初始化遊戲
+        function initGame() {
+            witchY = 50;
+            gameSpeed = 5;
+            score = 0;
+            gameRunning = true;
+            scoreDisplay.textContent = `分數: ${score}`;
+            gameOverScreen.style.display = 'none';
+            
+            // 清除所有障礙物
+            document.querySelectorAll('.obstacle').forEach(obs => obs.remove());
+            obstacles = [];
+            
+            // 重置女巫位置
+            witch.style.top = `${witchY}vh`;
+            witch.style.transform = 'rotate(0deg)';
+            
+            // 重新開始遊戲循環
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // 女巫控制
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && gameRunning) {
+                witchY -= 15;
+                witch.style.transform = 'rotate(-15deg)';
+            }
+        });
+        
+        // 觸控支援
+        document.addEventListener('touchstart', (e) => {
+            if (gameRunning) {
+                witchY -= 15;
+                witch.style.transform = 'rotate(-15deg)';
+                e.preventDefault(); // 防止觸控滾動
+            }
+        });
+        
+        // 障礙物生成
+        function spawnObstacle() {
+            if (!gameRunning) return;
+            
+            const obstacleTypes = ['cloud', 'bird', 'lightning'];
+            const type = obstacleTypes[Math.floor(Math.random() * 3)];
+            const obstacle = document.createElement('div');
+            obstacle.className = `obstacle ${type}`;
+            
+            // 設定障礙物位置
+            const obstacleLeft = window.innerWidth;
+            const obstacleTop = Math.random() * 80;
+            
+            obstacle.style.left = `${obstacleLeft}px`;
+            obstacle.style.top = `${obstacleTop}vh`;
+            
+            gameContainer.appendChild(obstacle);
+            
+            // 儲存障礙物資訊
+            obstacles.push({
+                element: obstacle,
+                left: obstacleLeft,
+                top: obstacleTop,
+                width: type === 'cloud' ? 120 : type === 'bird' ? 40 : 20,
+                height: type === 'cloud' ? 60 : type === 'bird' ? 30 : 60,
+                type: type
+            });
+        }
+        
+        // 碰撞檢測
+        function checkCollision() {
+            const witchRect = {
+                left: 100,
+                top: witchY,
+                right: 100 + 80,
+                bottom: witchY + 60
+            };
+            
+            for (let i = 0; i < obstacles.length; i++) {
+                const obs = obstacles[i];
+                
+                if (
+                    witchRect.left < obs.left + obs.width &&
+                    witchRect.right > obs.left &&
+                    witchRect.top < obs.top + obs.height &&
+                    witchRect.bottom > obs.top
+                ) {
+                    // 碰撞發生
+                    if (obs.type === 'cloud') {
+                        // 雲朵減速
+                        gameSpeed = Math.max(2, gameSpeed - 1);
+                        obs.element.remove();
+                        obstacles.splice(i, 1);
+                        i--;
+                    } else {
+                        // 其他障礙物遊戲結束
+                        endGame();
+                        return;
+                    }
+                }
+            }
+        }
+        
+        // 遊戲結束
+        function endGame() {
+            gameRunning = false;
+            finalScoreDisplay.textContent = `最終分數: ${score}`;
+            gameOverScreen.style.display = 'flex';
+            
+            // 女巫墜落動畫
+            let fallInterval = setInterval(() => {
+                witchY += 2;
+                witch.style.top = `${witchY}vh`;
+                witch.style.transform = 'rotate(45deg)';
+                
+                if (parseInt(witch.style.top) > window.innerHeight) {
+                    clearInterval(fallInterval);
+                }
+            }, 50);
+        }
+        
+        // 更新障礙物位置
+        function updateObstacles() {
+            for (let i = 0; i < obstacles.length; i++) {
+                const obs = obstacles[i];
+                obs.left -= gameSpeed;
+                obs.element.style.left = `${obs.left}px`;
+                
+                // 移除超出畫面的障礙物
+                if (obs.left < -100) {
+                    obs.element.remove();
+                    obstacles.splice(i, 1);
+                    i--;
+                    score += 1;
+                    scoreDisplay.textContent = `分數: ${score}`;
+                    
+                    // 每得10分增加難度
+                    if (score % 10 === 0) {
+                        gameSpeed += 0.5;
+                    }
+                }
+            }
+        }
+        
+        // 重力效果
+        function applyGravity() {
+            witchY += gravity;
+            witch.style.top = `${witchY}vh`;
+            
+            // 限制女巫不飛出畫面
+            if (witchY < 0) witchY = 0;
+            if (witchY > 90) witchY = 90;
+            
+            // 自然傾斜效果
+            if (witch.style.transform !== 'rotate(-15deg)') {
+                witch.style.transform = 'rotate(5deg)';
+            }
+        }
+        
+        // 遊戲主循環
+        function gameLoop() {
+            if (!gameRunning) return;
+            
+            applyGravity();
+            updateObstacles();
+            checkCollision();
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // 開始遊戲
+        initGame();
+        
+        // 每1-2秒生成新障礙物
+        setInterval(spawnObstacle, 1500);
+        
+        // 重新開始按鈕
+        restartBtn.addEventListener('click', initGame);
+    </script>
+</body>
+</html>
